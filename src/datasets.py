@@ -5,15 +5,23 @@ from typing import Tuple
 from termcolor import cprint
 
 
+# main.pyでの使われ方
+# train_set = ThingsMEGDataset("train", args.data_dir)
+# val_set   = ThingsMEGDataset("val", args.data_dir)
+# test_set  = ThingsMEGDataset("test", args.data_dir)
+
 class ThingsMEGDataset(torch.utils.data.Dataset):
     def __init__(self, split: str, data_dir: str = "data") -> None:
         super().__init__()
         
         assert split in ["train", "val", "test"], f"Invalid split: {split}"
         self.split = split
+
+        # "self.num_classes"をプロパティとして定義
         self.num_classes = 1854
         
         self.X = torch.load(os.path.join(data_dir, f"{split}_X.pt"))
+
         self.subject_idxs = torch.load(os.path.join(data_dir, f"{split}_subject_idxs.pt"))
         
         if split in ["train", "val"]:
@@ -29,10 +37,15 @@ class ThingsMEGDataset(torch.utils.data.Dataset):
         else:
             return self.X[i], self.subject_idxs[i]
         
+    # "self.num_channels"をプロパティとして定義
     @property
     def num_channels(self) -> int:
         return self.X.shape[1]
     
+    # "self.seq_len"をプロパティとして定義
     @property
     def seq_len(self) -> int:
         return self.X.shape[2]
+
+
+
